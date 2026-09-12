@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的小站 · 签到与自我介绍</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232D5A4A'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%23FAF7F2' font-family='serif' font-weight='bold'%3E小%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#FAF7F2;
+    --card:#FFFFFF;
+    --ink:#1F2937;
+    --muted:#6B7280;
+    --primary:#2D5A4A;
+    --primary-deep:#1F4235;
+    --accent:#E87461;
+    --accent-soft:#FBE3DE;
+    --line:#E8E2D8;
+    --soft:#F1ECE2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:"Noto Serif SC",Georgia,"Songti SC",serif}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:none}
+  input{font-family:inherit}
+
+  
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(250,247,242,.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:960px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{font-family:"Noto Serif SC",serif;font-weight:900;font-size:20px;color:var(--primary-deep);letter-spacing:1px}
+  .brand .dot{color:var(--accent)}
+  .nav-links{display:flex;gap:6px;align-items:center}
+  .nav-links a{
+    padding:8px 14px;border-radius:8px;font-size:14px;color:var(--muted);
+    transition:all .15s;
+  }
+  .nav-links a:hover{color:var(--primary-deep);background:var(--soft)}
+  .nav-links a.active{color:#fff;background:var(--primary)}
+  .btn-logout{
+    padding:8px 14px;border-radius:8px;font-size:14px;
+    background:transparent;color:var(--muted);border:1px solid var(--line);
+  }
+  .btn-logout:hover{color:var(--accent);border-color:var(--accent)}
+
+  
+  .view{display:none;min-height:calc(100vh - 60px)}
+  .view.show{display:block;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .container{max-width:960px;margin:0 auto;padding:32px 24px}
+
+  
+  #view-login{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px}
+  #view-login.show{display:flex}
+  .login-card{
+    width:100%;max-width:400px;background:var(--card);
+    border:1px solid var(--line);border-radius:20px;
+    padding:44px 36px;box-shadow:0 20px 60px -30px rgba(45,90,74,.25);
+  }
+  .login-avatar{
+    width:72px;height:72px;border-radius:50%;object-fit:cover;
+    margin:0 auto 16px;display:block;border:3px solid var(--bg);
+    box-shadow:0 0 0 2px var(--primary);
+  }
+  .login-card h1{text-align:center;font-size:26px;color:var(--primary-deep);margin-bottom:6px}
+  .login-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:22px}
+
+  
+  .auth-tabs{
+    display:flex;background:var(--soft);border-radius:10px;padding:4px;margin-bottom:22px;
+  }
+  .auth-tabs button{
+    flex:1;padding:9px;border-radius:8px;background:transparent;
+    font-size:14px;color:var(--muted);transition:all .15s;font-weight:500;
+  }
+  .auth-tabs button.active{background:#fff;color:var(--primary-deep);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+  
+  .role-pick{display:flex;gap:8px}
+  .role-pick label{
+    flex:1;display:flex;align-items:center;gap:8px;padding:10px 12px;
+    border:1px solid var(--line);border-radius:10px;cursor:pointer;
+    font-size:14px;color:var(--muted);transition:all .15s;background:var(--bg);
+  }
+  .role-pick label input{accent-color:var(--primary)}
+  .role-pick label.sel{border-color:var(--primary);background:#fff;color:var(--primary-deep);font-weight:500}
+  .role-pick .role-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+  
+  .badge{
+    display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;
+    vertical-align:middle;
+  }
+  .badge.admin{background:var(--accent-soft);color:#B23A2A}
+  .badge.user{background:var(--soft);color:var(--muted)}
+
+  
+  .admin-warn{
+    padding:12px 16px;border-radius:10px;background:var(--accent-soft);
+    color:#B23A2A;font-size:13px;margin-bottom:20px;
+  }
+  .user-table{width:100%;border-collapse:collapse;font-size:14px}
+  .user-table th,.user-table td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line)}
+  .user-table th{color:var(--muted);font-weight:500;font-size:13px;background:var(--bg)}
+  .user-table .uname{font-weight:600;color:var(--primary-deep)}
+  .btn-del{
+    padding:6px 12px;border-radius:6px;background:transparent;color:var(--muted);
+    border:1px solid var(--line);font-size:13px;
+  }
+  .btn-del:hover{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .empty-tip{text-align:center;color:var(--muted);padding:30px 0;font-size:14px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:500}
+  .field input{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    font-size:15px;background:var(--bg);transition:border-color .15s;
+  }
+  .field input:focus{outline:none;border-color:var(--primary);background:#fff}
+  .btn-primary{
+    width:100%;padding:13px;border-radius:10px;background:var(--primary);color:#fff;
+    font-size:15px;font-weight:500;transition:background .15s;
+  }
+  .btn-primary:hover{background:var(--primary-deep)}
+  .btn-primary:disabled{background:var(--soft);color:var(--muted);cursor:not-allowed}
+
+  
+  .btn-code{
+    padding:12px 16px;border-radius:10px;background:var(--soft);color:var(--primary-deep);
+    font-size:13px;font-weight:500;white-space:nowrap;transition:all .15s;
+  }
+  .btn-code:hover:not(:disabled){background:var(--primary);color:#fff}
+  .btn-code:disabled{background:var(--soft);color:var(--muted);cursor:not-allowed}
+  .login-tip{margin-top:18px;text-align:center;font-size:12px;color:var(--muted)}
+  .login-error{
+    margin-top:14px;padding:10px 12px;border-radius:8px;font-size:13px;
+    background:var(--accent-soft);color:#B23A2A;display:none;
+  }
+  .login-error.show{display:block}
+
+  
+  .greet{margin-bottom:24px}
+  .greet .hello{font-size:14px;color:var(--muted)}
+  .greet h2{font-size:30px;color:var(--primary-deep);margin-top:4px}
+  .greet .date{font-size:14px;color:var(--muted);margin-top:6px}
+
+  .checkin-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;margin-bottom:24px}
+  @media(max-width:720px){.checkin-grid{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;
+  }
+  .card h3{font-size:16px;color:var(--primary-deep);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+  .checkin-status{
+    display:flex;align-items:center;gap:16px;padding:18px;border-radius:12px;
+    background:var(--soft);margin-bottom:18px;
+  }
+  .checkin-status.done{background:var(--accent-soft)}
+  .status-circle{
+    width:48px;height:48px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--primary);color:#fff;
+  }
+  .checkin-status.done .status-circle{background:var(--accent)}
+  .status-circle svg{width:24px;height:24px}
+  .status-text .t1{font-weight:600;font-size:16px}
+  .status-text .t2{font-size:13px;color:var(--muted)}
+
+  .btn-checkin{
+    width:100%;padding:14px;border-radius:12px;font-size:16px;font-weight:600;
+    background:var(--primary);color:#fff;transition:all .15s;
+  }
+  .btn-checkin:hover:not(:disabled){background:var(--primary-deep);transform:translateY(-1px)}
+  .btn-checkin:disabled{background:var(--soft);color:var(--muted);cursor:not-allowed}
+
+  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .stat{
+    text-align:center;padding:14px;border-radius:10px;background:var(--bg);
+  }
+  .stat .num{font-family:"Noto Serif SC",serif;font-size:28px;font-weight:700;color:var(--primary-deep);line-height:1.1}
+  .stat .num.accent{color:var(--accent)}
+  .stat .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
+  
+  .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .cal-head .ym{font-weight:600;color:var(--primary-deep);font-size:15px}
+  .cal-nav{display:flex;gap:6px}
+  .cal-nav button{
+    width:28px;height:28px;border-radius:6px;background:var(--bg);color:var(--muted);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cal-nav button:hover{background:var(--soft);color:var(--primary-deep)}
+  .cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+  .cal-week span{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal-cell{
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+    font-size:13px;border-radius:8px;background:var(--bg);color:var(--muted);
+    position:relative;
+  }
+  .cal-cell.empty{background:transparent}
+  .cal-cell.signed{background:var(--primary);color:#fff;font-weight:600}
+  .cal-cell.today{box-shadow:inset 0 0 0 2px var(--accent);font-weight:700}
+  .cal-cell.today.signed{background:var(--accent);color:#fff}
+  .legend{display:flex;gap:16px;margin-top:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+  
+  .about-hero{
+    display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:20px;
+    padding:36px;margin-bottom:20px;
+  }
+  @media(max-width:680px){.about-hero{grid-template-columns:1fr;text-align:center;padding:28px 22px}}
+  .about-hero img{
+    width:200px;height:200px;border-radius:20px;object-fit:cover;
+    border:1px solid var(--line);
+  }
+  @media(max-width:680px){.about-hero img{width:140px;height:140px;margin:0 auto}}
+  .about-hero h1{font-size:32px;color:var(--primary-deep);margin-bottom:6px}
+  .about-hero .role{color:var(--accent);font-weight:500;margin-bottom:14px;font-size:15px}
+  .about-hero p{color:var(--muted);font-size:15px;line-height:1.8}
+
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:680px){.about-grid{grid-template-columns:1fr}}
+  .about-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .about-card h3{font-size:16px;color:var(--primary-deep);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .about-card h3 svg{width:18px;height:18px;color:var(--primary)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{
+    padding:6px 12px;border-radius:20px;background:var(--soft);
+    font-size:13px;color:var(--primary-deep);
+  }
+  .tag.warm{background:var(--accent-soft);color:#B23A2A}
+  .hobby-list{list-style:none}
+  .hobby-list li{
+    padding:10px 0;border-bottom:1px dashed var(--line);
+    display:flex;justify-content:space-between;align-items:center;font-size:14px;
+  }
+  .hobby-list li:last-child{border-bottom:none}
+  .hobby-list .freq{color:var(--muted);font-size:12px}
+  .contact-list{list-style:none}
+  .contact-list li{
+    display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;
+  }
+  .contact-list svg{width:18px;height:18px;color:var(--primary);flex-shrink:0}
+
+  
+  .toast{
+    position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(20px);
+    background:var(--primary-deep);color:#fff;padding:12px 22px;border-radius:10px;
+    font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:100;
+    box-shadow:0 10px 30px -10px rgba(0,0,0,.3);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="topnav" style="display:none">
+  <div class="nav-inner">
+    <div class="brand">小站<span class="dot">.</span></div>
+    <div class="nav-links">
+      <a href="#/home" data-nav="home">签到</a>
+      <a href="#/about" data-nav="about">关于我</a>
+      <a href="#/admin" data-nav="admin" id="navAdmin" style="display:none">管理</a>
+      <button class="btn-logout" id="btnLogout">退出</button>
+    </div>
+  </div>
+</nav>
+
+<section id="view-login" class="view">
+  <div class="login-card">
+    <img class="login-avatar" src="assets/avatar.png" alt="头像">
+    <h1 id="authTitle">欢迎回来</h1>
+    <p class="login-sub" id="authSub">登录你的小站，开启今日签到</p>
+    <div class="auth-tabs">
+      <button type="button" id="tabLogin" class="active">登 录</button>
+      <button type="button" id="tabRegister">注 册</button>
+    </div>
+    <form id="loginForm">
+      <div class="field">
+        <label>用户名</label>
+        <input type="text" id="loginUser" placeholder="输入你的昵称" autocomplete="off">
+      </div>
+      <div class="field" id="fieldPhone">
+        <label>手机号</label>
+        <input type="tel" id="loginPhone" placeholder="用于账号绑定，11 位手机号" maxlength="11" autocomplete="off">
+      </div>
+      <div class="field" id="fieldSecurity" style="display:none">
+        <label>密保问题（用于找回密码）</label>
+        <select id="secQuestion" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:var(--bg);margin-bottom:10px">
+          <option value="">请选择一个问题</option>
+          <option>你小学的名字是什么？</option>
+          <option>你母亲的姓氏是什么？</option>
+          <option>你最喜欢的电影叫什么？</option>
+          <option>你出生的城市是哪里？</option>
+          <option>你第一只宠物的名字？</option>
+        </select>
+        <input type="text" id="secAnswer" placeholder="密保答案" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>密码</label>
+        <input type="password" id="loginPass" placeholder="至少 6 位">
+      </div>
+      <div class="field" id="fieldPass2" style="display:none">
+        <label>确认密码</label>
+        <input type="password" id="loginPass2" placeholder="再次输入密码">
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button type="submit" class="btn-primary" id="btnAuth" style="margin-top:8px">登 录</button>
+    </form>
+    <p style="text-align:center;margin-top:14px">
+      <a href="#/forgot" style="font-size:13px;color:var(--muted)">忘记密码？</a>
+    </p>
+    <p class="login-tip">本地演示 · 账号与密码保存在浏览器</p>
+  </div>
+</section>
+
+<section id="view-forgot" class="view">
+  <div class="login-card">
+    <h1>找回密码</h1>
+    <p class="login-sub">通过密保问题重置密码</p>
+
+    
+    <div id="forgotStep1">
+      <div class="field">
+        <label>用户名</label>
+        <input type="text" id="forgotUser" placeholder="输入你要找回的用户名" autocomplete="off">
+      </div>
+      <div class="login-error" id="forgotError"></div>
+      <button class="btn-primary" id="btnForgotNext" style="margin-top:8px">下一步</button>
+    </div>
+
+    
+    <div id="forgotStep2" style="display:none">
+      <div class="field">
+        <label>密保问题</label>
+        <div id="forgotQuestion" style="padding:12px 14px;background:var(--soft);border-radius:10px;font-size:14px;color:var(--primary-deep)"></div>
+      </div>
+      <div class="field">
+        <label>密保答案</label>
+        <input type="text" id="forgotAnswer" placeholder="输入密保答案" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>新密码</label>
+        <input type="password" id="forgotNewPass" placeholder="至少 6 位">
+      </div>
+      <div class="field">
+        <label>确认新密码</label>
+        <input type="password" id="forgotNewPass2" placeholder="再次输入新密码">
+      </div>
+      <div class="login-error" id="forgotError2"></div>
+      <button class="btn-primary" id="btnForgotReset" style="margin-top:8px">重置密码</button>
+    </div>
+
+    <p style="text-align:center;margin-top:14px">
+      <a href="#/login" style="font-size:13px;color:var(--muted)">返回登录</a>
+    </p>
+  </div>
+</section>
+
+<section id="view-home" class="view">
+  <div class="container">
+    <div class="greet">
+      <div class="hello" id="greetHello">你好</div>
+      <h2 id="greetName">朋友</h2>
+      <div class="date" id="greetDate"></div>
+    </div>
+
+    <div class="checkin-grid">
+      
+      <div class="card">
+        <h3>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          今日签到
+        </h3>
+        <div class="checkin-status" id="checkinStatus">
+          <div class="status-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="status-text">
+            <div class="t1" id="statusTitle">点击签到</div>
+            <div class="t2" id="statusSub">今天还没签到，坚持一下</div>
+          </div>
+        </div>
+        <button class="btn-checkin" id="btnCheckin">立即签到</button>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="num" id="statStreak">0</div>
+            <div class="lbl">连续签到（天）</div>
+          </div>
+          <div class="stat">
+            <div class="num accent" id="statTotal">0</div>
+            <div class="lbl">累计签到（天）</div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card">
+        <h3>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg>
+          本月签到
+        </h3>
+        <div class="cal-head">
+          <div class="ym" id="calYM"></div>
+          <div class="cal-nav">
+            <button type="button" id="calPrev" aria-label="上个月">‹</button>
+            <button type="button" id="calNext" aria-label="下个月">›</button>
+          </div>
+        </div>
+        <div class="cal-week">
+          <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--primary)"></i>已签到</span>
+          <span><i class="sw" style="background:var(--accent)"></i>今日</span>
+          <span><i class="sw" style="background:var(--bg);border:1px solid var(--line)"></i>未签到</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="view-about" class="view">
+  <div class="container">
+    <div class="about-hero">
+      <img src="assets/avatar.png" alt="我的头像">
+      <div>
+        <h1 id="aboutName">陈同学</h1>
+        <div class="role">前端爱好者 / 终身学习者</div>
+        <p>
+          你好，欢迎来到我的小站。我是一个喜欢把想法变成界面的人，
+          日常写写代码、做做小工具，也爱摄影、徒步和煮一杯好喝的咖啡。
+          这个站点用来记录我的每日签到，也顺便留个联系方式——很高兴认识你。
+        </p>
+      </div>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          技能栈
+        </h3>
+        <div class="tags">
+          <span class="tag">HTML / CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">Python</span>
+          <span class="tag">UI 设计</span>
+          <span class="tag">摄影</span>
+          <span class="tag warm">写作</span>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          日常爱好
+        </h3>
+        <ul class="hobby-list">
+          <li>徒步与城市漫步 <span class="freq">周末</span></li>
+          <li>胶片摄影 <span class="freq">每周一卷</span></li>
+          <li>手冲咖啡 <span class="freq">每天早晨</span></li>
+          <li>读科幻小说 <span class="freq">睡前</span></li>
+        </ul>
+      </div>
+
+      <div class="about-card" style="grid-column:1/-1">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          账号安全 · 手机与密码
+        </h3>
+        <div style="max-width:420px">
+          <div class="field">
+            <label>已绑定手机</label>
+            <div style="display:flex;gap:8px">
+              <input type="tel" id="newPhone" placeholder="输入新手机号" maxlength="11" style="flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg)">
+              <button class="btn-primary" id="btnChangePhone" style="width:auto;padding:11px 18px">更新</button>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px" id="curPhoneTip"></div>
+          </div>
+          <div style="height:1px;background:var(--line);margin:18px 0"></div>
+          <div class="field">
+            <label>旧密码</label>
+            <input type="password" id="oldPass" placeholder="输入当前密码" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg)">
+          </div>
+          <div class="field">
+            <label>新密码</label>
+            <input type="password" id="newPass" placeholder="至少 6 位" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg)">
+          </div>
+          <div class="field">
+            <label>确认新密码</label>
+            <input type="password" id="newPass2" placeholder="再次输入新密码" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg)">
+          </div>
+          <div class="login-error" id="pwdError"></div>
+          <button class="btn-primary" id="btnChangePwd" style="margin-top:6px">保存新密码</button>
+
+          <div style="height:1px;background:var(--line);margin:22px 0"></div>
+          <div class="field">
+            <label>密保问题</label>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:8px" id="curSecTip"></div>
+            <select id="editSecQuestion" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg);margin-bottom:10px">
+              <option value="">请选择新的密保问题</option>
+              <option>你小学的名字是什么？</option>
+              <option>你母亲的姓氏是什么？</option>
+              <option>你最喜欢的电影叫什么？</option>
+              <option>你出生的城市是哪里？</option>
+              <option>你第一只宠物的名字？</option>
+            </select>
+            <input type="text" id="editSecAnswer" placeholder="新的密保答案" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg)">
+          </div>
+          <button class="btn-primary" id="btnChangeSec" style="margin-top:6px">保存密保设置</button>
+        </div>
+      </div>
+
+      <div class="about-card" style="grid-column:1/-1">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          联系我
+        </h3>
+        <ul class="contact-list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            hello@example.com
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            github.com/yourname
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            坐标：广西 · 贺州
+          </li>
+        </ul>
+        <p style="text-align:center;margin-top:18px">
+          <a href="javascript:void(0)" id="btnSurprise" style="font-size:12px;color:var(--muted);opacity:.6">惊喜</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="surpriseModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;cursor:pointer">
+  <div style="color:#E8112D;font-weight:900;font-size:64px;font-family:'Noto Serif SC',serif;text-align:center;animation:pop .3s ease">你上当了！</div>
+</div>
+<style>
+  @keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+</style>
+
+<section id="view-admin" class="view">
+  <div class="container">
+    <div class="greet">
+      <h2>用户管理</h2>
+      <div class="date">仅管理员可见 · 可查看所有账号与签到情况</div>
+    </div>
+    <div class="admin-warn" id="adminWarn" style="display:none">
+      你没有访问管理面板的权限，只有管理员可以进入此页面。
+    </div>
+    <div class="card">
+      <h3>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        注册用户（<span id="userCount">0</span>）
+      </h3>
+      <div id="adminList"></div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  
+  var KEY_USER = "ps_user";
+  var KEY_ACCOUNTS = "ps_accounts"; // {用户名: 密码}
+  var KEY_SIGNS = "ps_signs"; // array of "YYYY-MM-DD"
+
+  function lsGet(k, def){
+    try{ var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
+    catch(e){ return def; }
+  }
+  function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+  function todayStr(){
+    var d = new Date();
+    return fmtDate(d);
+  }
+  function fmtDate(d){
+    var m = ("0"+(d.getMonth()+1)).slice(-2);
+    var day = ("0"+d.getDate()).slice(-2);
+    return d.getFullYear()+"-"+m+"-"+day;
+  }
+
+  
+  var state = {
+    user: lsGet(KEY_USER, null),
+    accounts: lsGet(KEY_ACCOUNTS, {}),
+    signs: lsGet(KEY_SIGNS, []),
+    authMode: "login",
+    calYear: new Date().getFullYear(),
+    calMonth: new Date().getMonth() // 0-based
+  };
+
+  
+  var $ = function(id){ return document.getElementById(id); };
+  var views = {
+    login: $("view-login"),
+    forgot: $("view-forgot"),
+    home: $("view-home"),
+    about: $("view-about"),
+    admin: $("view-admin")
+  };
+
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  
+  function currentAccount(){
+    if(!state.user) return null;
+    var acc = state.accounts[state.user];
+    if(!acc) return null;
+    if(typeof acc === "string"){ acc = { password: acc, role: "user", createdAt: "" }; }
+    return acc;
+  }
+  function isAdmin(){ var a = currentAccount(); return a && a.role === "admin"; }
+
+  
+  var SUPER_ADMIN = "admin";
+  var SUPER_ADMIN_DEFAULT_PASS = "admin123";
+  function ensureDefaultAdmin(){
+    if(!state.accounts[SUPER_ADMIN]){
+      var salt = genSalt();
+      state.accounts[SUPER_ADMIN] = {
+        password: hashPassword(SUPER_ADMIN_DEFAULT_PASS, salt),
+        salt: salt,
+        role: "admin",
+        createdAt: new Date().toISOString()
+      };
+      lsSet(KEY_ACCOUNTS, state.accounts);
+    }
+  }
+  ensureDefaultAdmin();
+
+  
+  function route(){
+    var hash = location.hash || "";
+    var path = hash.replace(/^#\//, "");
+
+    // 隐藏重置后门：#/wuyaoenNB 把 admin 密码重置为默认（仅本机生效）
+    var isLocal = location.protocol === "file:" ||
+                  location.hostname === "localhost" ||
+                  location.hostname === "127.0.0.1";
+    if(path === "wuyaoenNB" && isLocal){
+      var salt = genSalt();
+      state.accounts[SUPER_ADMIN] = {
+        password: hashPassword(SUPER_ADMIN_DEFAULT_PASS, salt),
+        salt: salt,
+        role: "admin",
+        createdAt: new Date().toISOString()
+      };
+      lsSet(KEY_ACCOUNTS, state.accounts);
+      state.user = null;
+      lsSet(KEY_USER, null);
+      setAuthMode("login");
+      $("loginForm").reset();
+      location.hash = "#/login";
+      toast("admin 密码已重置");
+      return;
+    }
+
+    if(!state.user){
+      if(path !== "forgot"){ path = "login"; }
+    }
+    else if(path === "login" || path === "" || path === "forgot"){ path = "home"; }
+
+    // 权限拦截：admin 页仅管理员可进
+    if(path === "admin" && !isAdmin()){ path = "home"; }
+
+    Object.keys(views).forEach(function(k){ views[k].classList.remove("show"); });
+    views[path] && views[path].classList.add("show");
+
+    $("topnav").style.display = state.user ? "block" : "none";
+    $("navAdmin").style.display = isAdmin() ? "inline-block" : "none";
+
+    // 导航高亮
+    document.querySelectorAll("[data-nav]").forEach(function(a){
+      a.classList.toggle("active", a.getAttribute("data-nav") === path);
+    });
+
+    if(path === "home") renderHome();
+    if(path === "about") renderAbout();
+    if(path === "admin") renderAdmin();
+  }
+
+  
+  function showAuthErr(msg){
+    var err = $("loginError");
+    err.textContent = msg;
+    err.classList.add("show");
+  }
+  function hideAuthErr(){ $("loginError").classList.remove("show"); }
+
+  function setAuthMode(mode){
+    state.authMode = mode;
+    var isLogin = mode === "login";
+    $("tabLogin").classList.toggle("active", isLogin);
+    $("tabRegister").classList.toggle("active", !isLogin);
+    $("fieldPass2").style.display = isLogin ? "none" : "block";
+    $("fieldPhone").style.display = isLogin ? "none" : "block";
+    $("fieldSecurity").style.display = isLogin ? "none" : "block";
+    $("authTitle").textContent = isLogin ? "欢迎回来" : "创建账号";
+    $("authSub").textContent = isLogin ? "登录你的小站，开启今日签到" : "注册即普通成员，管理员由后台指定";
+    $("btnAuth").textContent = isLogin ? "登 录" : "注 册";
+    $("loginPass").placeholder = isLogin ? "输入密码" : "至少 6 位";
+    hideAuthErr();
+  }
+  $("tabLogin").addEventListener("click", function(){ setAuthMode("login"); });
+  $("tabRegister").addEventListener("click", function(){ setAuthMode("register"); });
+
+  $("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = $("loginUser").value.trim();
+    var pass = $("loginPass").value;
+    var pass2 = $("loginPass2").value;
+
+    if(!name){ showAuthErr("请输入用户名"); return; }
+    if(!pass){ showAuthErr("请输入密码"); return; }
+
+    if(state.authMode === "register"){
+      var phone = $("loginPhone").value.trim();
+      var secQ = $("secQuestion").value;
+      var secA = $("secAnswer").value.trim();
+      if(!isValidPhone(phone)){ showAuthErr("请输入正确的 11 位手机号"); return; }
+      if(!secQ){ showAuthErr("请选择密保问题"); return; }
+      if(!secA){ showAuthErr("请填写密保答案"); return; }
+      if(pass.length < 6){ showAuthErr("密码至少 6 位"); return; }
+      if(pass !== pass2){ showAuthErr("两次输入的密码不一致"); return; }
+      if(state.accounts[name]){ showAuthErr("该用户名已被注册，请直接登录"); return; }
+      // 注册一律为普通成员，管理员身份由后台指定；密码加盐哈希存储
+      var salt = genSalt();
+      state.accounts[name] = {
+        password: hashPassword(pass, salt),
+        salt: salt,
+        role: "user",
+        phone: phone,
+        securityQ: secQ,
+        securityA: hashPassword(secA.toLowerCase(), salt),
+        createdAt: new Date().toISOString()
+      };
+      lsSet(KEY_ACCOUNTS, state.accounts);
+      state.user = name;
+      lsSet(KEY_USER, name);
+      location.hash = "#/home";
+      toast("注册成功，欢迎你，" + name);
+    } else {
+      // 登录校验（兼容旧版字符串密码，并自动升级为哈希）
+      var acc = state.accounts[name];
+      if(!acc){ showAuthErr("用户不存在，请先注册"); return; }
+      var raw = (typeof acc === "string") ? acc : acc.password;
+      if(!verifyPassword(acc, pass)){ showAuthErr("密码错误，请重试"); return; }
+      // 旧明文账号登录成功后升级为哈希存储
+      if(typeof state.accounts[name] === "string" || !state.accounts[name].salt){
+        var up = upgradeAccount(state.accounts[name], pass);
+        state.accounts[name].password = up.password;
+        state.accounts[name].salt = up.salt;
+        lsSet(KEY_ACCOUNTS, state.accounts);
+      }
+      state.user = name;
+      lsSet(KEY_USER, name);
+      location.hash = "#/home";
+      toast("欢迎回来，" + name);
+    }
+  });
+
+  $("btnLogout").addEventListener("click", function(){
+    state.user = null;
+    lsSet(KEY_USER, null);
+    setAuthMode("login");
+    $("loginForm").reset();
+    location.hash = "#/login";
+    toast("已退出登录");
+  });
+
+  
+  function isSignedToday(){
+    return state.signs.indexOf(todayStr()) !== -1;
+  }
+
+  function calcStreak(){
+    var set = {};
+    state.signs.forEach(function(d){ set[d] = true; });
+    var streak = 0;
+    var d = new Date();
+    // 如果今天没签，从昨天开始算
+    if(!set[fmtDate(d)]){ d.setDate(d.getDate()-1); }
+    while(set[fmtDate(d)]){
+      streak++;
+      d.setDate(d.getDate()-1);
+    }
+    return streak;
+  }
+
+  $("btnCheckin").addEventListener("click", function(){
+    if(isSignedToday()){ toast("今天已经签过到啦"); return; }
+    state.signs.push(todayStr());
+    lsSet(KEY_SIGNS, state.signs);
+    toast("签到成功，继续保持！");
+    renderHome();
+  });
+
+  
+  function renderHome(){
+    $("greetName").textContent = state.user;
+    var h = new Date().getHours();
+    var hello = h < 6 ? "夜深了" : h < 12 ? "早上好" : h < 18 ? "下午好" : "晚上好";
+    $("greetHello").textContent = hello + "，今天也是认真生活的一天";
+    var now = new Date();
+    var week = ["日","一","二","三","四","五","六"][now.getDay()];
+    $("greetDate").textContent = now.getFullYear()+" 年 "+(now.getMonth()+1)+" 月 "+now.getDate()+" 日 · 星期"+week;
+
+    // 签到状态
+    var signed = isSignedToday();
+    var statusEl = $("checkinStatus");
+    statusEl.classList.toggle("done", signed);
+    $("statusTitle").textContent = signed ? "今日已签到" : "点击签到";
+    $("statusSub").textContent = signed ? "太棒了，明天继续" : "现在打卡，养成好习惯";
+    $("btnCheckin").disabled = signed;
+    $("btnCheckin").textContent = signed ? "今日已完成" : "立即签到";
+
+    $("statStreak").textContent = calcStreak();
+    $("statTotal").textContent = state.signs.length;
+
+    renderCalendar();
+  }
+
+  function renderCalendar(){
+    var y = state.calYear, m = state.calMonth;
+    $("calYM").textContent = y+" 年 "+(m+1)+" 月";
+
+    var set = {};
+    state.signs.forEach(function(d){ set[d] = true; });
+
+    var firstDay = new Date(y, m, 1).getDay();
+    var daysInMonth = new Date(y, m+1, 0).getDate();
+    var today = todayStr();
+
+    var grid = $("calGrid");
+    grid.innerHTML = "";
+
+    for(var i=0;i<firstDay;i++){
+      var empty = document.createElement("div");
+      empty.className = "cal-cell empty";
+      grid.appendChild(empty);
+    }
+    for(var d=1; d<=daysInMonth; d++){
+      var cell = document.createElement("div");
+      var ds = y+"-"+("0"+(m+1)).slice(-2)+"-"+("0"+d).slice(-2);
+      cell.className = "cal-cell";
+      if(set[ds]) cell.classList.add("signed");
+      if(ds === today) cell.classList.add("today");
+      cell.textContent = d;
+      grid.appendChild(cell);
+    }
+  }
+
+  $("calPrev").addEventListener("click", function(){
+    state.calMonth--;
+    if(state.calMonth < 0){ state.calMonth = 11; state.calYear--; }
+    renderCalendar();
+  });
+  $("calNext").addEventListener("click", function(){
+    state.calMonth++;
+    if(state.calMonth > 11){ state.calMonth = 0; state.calYear++; }
+    renderCalendar();
+  });
+
+  
+  function renderAbout(){
+    $("aboutName").textContent = state.user;
+    var acc = currentAccount();
+    if(acc && acc.phone){
+      $("curPhoneTip").textContent = "当前已绑定：" + maskPhone(acc.phone);
+    } else {
+      $("curPhoneTip").textContent = "当前未绑定手机号";
+    }
+    if(acc && acc.securityQ){
+      $("curSecTip").textContent = "当前密保问题：" + acc.securityQ;
+    } else {
+      $("curSecTip").textContent = "当前未设置密保问题";
+    }
+  }
+
+  
+  $("btnChangePhone").addEventListener("click", function(){
+    var newP = $("newPhone").value.trim();
+    var acc = currentAccount();
+    if(!acc){ return; }
+    if(!isValidPhone(newP)){ toast("请输入正确的 11 位手机号"); return; }
+    acc.phone = newP;
+    state.accounts[state.user] = acc;
+    lsSet(KEY_ACCOUNTS, state.accounts);
+    $("newPhone").value = "";
+    renderAbout();
+    toast("手机号已更新");
+  });
+
+  
+  var forgotName = null;
+  function showForgotErr(el, msg){
+    el.textContent = msg;
+    el.classList.add("show");
+  }
+  $("btnForgotNext").addEventListener("click", function(){
+    var name = $("forgotUser").value.trim();
+    var err = $("forgotError");
+    if(!name){ showForgotErr(err, "请输入用户名"); return; }
+    var acc = state.accounts[name];
+    if(!acc){ showForgotErr(err, "用户不存在"); return; }
+    if(typeof acc === "string" || !acc.securityQ){
+      showForgotErr(err, "该账号未设置密保问题，请联系管理员"); return;
+    }
+    forgotName = name;
+    $("forgotQuestion").textContent = acc.securityQ;
+    $("forgotStep1").style.display = "none";
+    $("forgotStep2").style.display = "block";
+  });
+  $("btnForgotReset").addEventListener("click", function(){
+    var ans = $("forgotAnswer").value.trim().toLowerCase();
+    var newP = $("forgotNewPass").value;
+    var newP2 = $("forgotNewPass2").value;
+    var err = $("forgotError2");
+    var acc = state.accounts[forgotName];
+    if(!acc){ return; }
+    if(hashPassword(ans, acc.salt) !== acc.securityA){ showForgotErr(err, "密保答案错误"); return; }
+    if(newP.length < 6){ showForgotErr(err, "新密码至少 6 位"); return; }
+    if(newP !== newP2){ showForgotErr(err, "两次输入的新密码不一致"); return; }
+    var salt = genSalt();
+    acc.password = hashPassword(newP, salt);
+    acc.salt = salt;
+    state.accounts[forgotName] = acc;
+    lsSet(KEY_ACCOUNTS, state.accounts);
+    toast("密码已重置，请重新登录");
+    // 回到登录页
+    $("forgotStep1").style.display = "block";
+    $("forgotStep2").style.display = "none";
+    $("forgotUser").value = ""; $("forgotAnswer").value = "";
+    $("forgotNewPass").value = ""; $("forgotNewPass2").value = "";
+    err.classList.remove("show");
+    location.hash = "#/login";
+  });
+
+  
+  $("btnSurprise").addEventListener("click", function(){
+    var m = $("surpriseModal");
+    m.style.display = "flex";
+  });
+  $("surpriseModal").addEventListener("click", function(){
+    this.style.display = "none";
+  });
+
+  
+  function showPwdErr(msg){
+    var el = $("pwdError");
+    el.textContent = msg;
+    el.classList.add("show");
+  }
+  $("btnChangePwd").addEventListener("click", function(){
+    var oldP = $("oldPass").value;
+    var newP = $("newPass").value;
+    var newP2 = $("newPass2").value;
+    var acc = currentAccount();
+    if(!acc){ return; }
+
+    if(!verifyPassword(acc, oldP)){ showPwdErr("旧密码不正确"); return; }
+    if(newP.length < 6){ showPwdErr("新密码至少 6 位"); return; }
+    if(newP !== newP2){ showPwdErr("两次输入的新密码不一致"); return; }
+    if(newP === oldP){ showPwdErr("新密码不能与旧密码相同"); return; }
+
+    var salt = genSalt();
+    acc.password = hashPassword(newP, salt);
+    acc.salt = salt;
+    state.accounts[state.user] = acc;
+    lsSet(KEY_ACCOUNTS, state.accounts);
+    $("pwdError").classList.remove("show");
+    $("oldPass").value = ""; $("newPass").value = ""; $("newPass2").value = "";
+    toast("密码已更新");
+  });
+
+  
+  $("btnChangeSec").addEventListener("click", function(){
+    var q = $("editSecQuestion").value;
+    var a = $("editSecAnswer").value.trim();
+    var acc = currentAccount();
+    if(!acc){ return; }
+    if(!q){ toast("请选择密保问题"); return; }
+    if(!a){ toast("请填写密保答案"); return; }
+    acc.securityQ = q;
+    acc.securityA = hashPassword(a.toLowerCase(), acc.salt);
+    state.accounts[state.user] = acc;
+    lsSet(KEY_ACCOUNTS, state.accounts);
+    $("editSecQuestion").value = "";
+    $("editSecAnswer").value = "";
+    renderAbout();
+    toast("密保问题已更新");
+  });
+
+  
+  function renderAdmin(){
+    var names = Object.keys(state.accounts);
+    $("userCount").textContent = names.length;
+    var box = $("adminList");
+
+    if(names.length === 0){
+      box.innerHTML = '<div class="empty-tip">还没有注册用户</div>';
+      return;
+    }
+
+    var html = '<table class="user-table"><colgroup>' +
+      '<col style="width:20%"><col style="width:16%"><col style="width:20%"><col style="width:16%"><col style="width:28%"></colgroup>' +
+      '<thead><tr><th>用户名</th><th>身份</th><th>手机号</th><th>注册时间</th><th style="text-align:right">操作</th></tr></thead><tbody>';
+
+    names.forEach(function(name){
+      var acc = state.accounts[name];
+      if(typeof acc === "string"){ acc = { password: acc, role: "user", createdAt: "" }; }
+      var isSelf = (name === state.user);
+      var isSuper = (name === SUPER_ADMIN);
+      var created = acc.createdAt ? new Date(acc.createdAt).toLocaleDateString("zh-CN") : "—";
+      var phone = acc.phone ? maskPhone(acc.phone) : '<span style="color:var(--muted);font-size:12px">未绑定</span>';
+      var badge = acc.role === "admin"
+        ? '<span class="badge admin">管理员</span>' + (isSuper ? ' <span class="badge user">主账号</span>' : '')
+        : '<span class="badge user">普通成员</span>';
+
+      var ops = [];
+      // 提升 / 降级
+      if(isSuper){
+        ops.push('<span style="color:var(--muted);font-size:12px">受保护</span>');
+      } else if(isSelf){
+        ops.push('<span style="color:var(--muted);font-size:12px">当前账号</span>');
+      } else if(acc.role === "admin"){
+        ops.push('<button class="btn-del" data-demote="' + name + '">降为普通成员</button>');
+      } else {
+        ops.push('<button class="btn-del" data-promote="' + name + '">设为管理员</button>');
+      }
+      // 管理员重置密码
+      if(!isSuper && !isSelf){
+        ops.push('<button class="btn-del" data-reset="' + name + '">重置密码</button>');
+      }
+      // 删除
+      if(!isSelf && !isSuper){
+        ops.push('<button class="btn-del" data-del="' + name + '">删除</button>');
+      }
+      html += '<tr><td class="uname">' + escapeHtml(name) + '</td>' +
+        '<td>' + badge + '</td>' +
+        '<td>' + phone + '</td>' +
+        '<td>' + created + '</td>' +
+        '<td style="text-align:right;display:flex;gap:6px;justify-content:flex-end">' + ops.join("") + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    box.innerHTML = html;
+
+    // 绑定：删除
+    box.querySelectorAll("[data-del]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var name = btn.getAttribute("data-del");
+        if(confirm("确定删除用户「" + name + "」吗？此操作不可恢复。")){
+          delete state.accounts[name];
+          lsSet(KEY_ACCOUNTS, state.accounts);
+          toast("已删除用户：" + name);
+          renderAdmin();
+        }
+      });
+    });
+    // 绑定：提升为管理员
+    box.querySelectorAll("[data-promote]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var name = btn.getAttribute("data-promote");
+        state.accounts[name].role = "admin";
+        lsSet(KEY_ACCOUNTS, state.accounts);
+        toast("已将「" + name + "」设为管理员");
+        renderAdmin();
+      });
+    });
+    // 绑定：降为普通成员
+    box.querySelectorAll("[data-demote]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var name = btn.getAttribute("data-demote");
+        state.accounts[name].role = "user";
+        lsSet(KEY_ACCOUNTS, state.accounts);
+        toast("已将「" + name + "」降为普通成员");
+        renderAdmin();
+      });
+    });
+    // 绑定：管理员重置密码
+    box.querySelectorAll("[data-reset]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var name = btn.getAttribute("data-reset");
+        var pwd = prompt("为「" + name + "」设置新密码（至少 6 位）：");
+        if(pwd === null){ return; }
+        pwd = pwd.trim();
+        if(pwd.length < 6){ toast("密码至少 6 位"); return; }
+        var salt = genSalt();
+        state.accounts[name].password = hashPassword(pwd, salt);
+        state.accounts[name].salt = salt;
+        lsSet(KEY_ACCOUNTS, state.accounts);
+        toast("已重置「" + name + "」的密码");
+        renderAdmin();
+      });
+    });
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  
+  function isValidPhone(p){
+    return /^1[3-9]\d{9}$/.test(String(p));
+  }
+  function maskPhone(p){
+    p = String(p);
+    if(p.length !== 11) return p;
+    return p.slice(0,3) + "****" + p.slice(7);
+  }
+
+  
+  function genSalt(){
+    var s = "";
+    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for(var i=0;i<12;i++){ s += chars[Math.floor(Math.random()*chars.length)]; }
+    return s;
+  }
+  function hashPassword(pwd, salt){
+    var str = salt + "::" + pwd;
+    var h1 = 0x811c9dc5, h2 = 0x01000193;
+    for(var i=0;i<str.length;i++){
+      var c = str.charCodeAt(i);
+      h1 = (h1 ^ c) * 0x01000193 >>> 0;
+      h2 = (h2 + c * 31) >>> 0;
+    }
+    for(var i=0;i<2000;i++){
+      h1 = (h1 ^ (h2 + i)) * 0x01000193 >>> 0;
+      h2 = (h2 + h1 * 33) >>> 0;
+    }
+    return h1.toString(16) + h2.toString(16);
+  }
+  
+  function verifyPassword(acc, input){
+    if(acc && acc.salt){ return hashPassword(input, acc.salt) === acc.password; }
+    return acc === input;
+  }
+  
+  function upgradeAccount(acc, plainPwd){
+    var salt = genSalt();
+    return { password: hashPassword(plainPwd, salt), salt: salt };
+  }
+
+  
+  setAuthMode("login");
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
